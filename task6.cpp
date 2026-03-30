@@ -65,7 +65,7 @@ int main() {
     cout << "Enter starting directory: ";
     cin >> startDir;
 
-    cout << "Enter bin width (e.g., 1024): ";
+    cout << "Enter bin width: ";
     cin >> binWidth;
 
     traverseDirectory(startDir, binWidth);
