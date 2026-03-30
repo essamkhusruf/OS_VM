@@ -19,7 +19,6 @@ void traverseDirectory(const string& path, int binWidth) {
     while ((entry = readdir(dir)) != NULL) {
         string name = entry->d_name;
 
-        // Skip . and ..
         if (name == "." || name == "..")
             continue;
 
@@ -29,11 +28,10 @@ void traverseDirectory(const string& path, int binWidth) {
         if (stat(fullPath.c_str(), &fileStat) == -1)
             continue;
 
-        // If directory → recurse
         if (S_ISDIR(fileStat.st_mode)) {
             traverseDirectory(fullPath, binWidth);
         }
-        // If regular file → process
+        
         else if (S_ISREG(fileStat.st_mode)) {
             long size = fileStat.st_size;
 
