@@ -6,10 +6,9 @@
 
 using namespace std;
 
-// Histogram: key = bin index, value = count
 map<int, int> histogram;
 
-// Function to process directory
+// Traverse directory recursively
 void traverseDirectory(const string& path, int binWidth) {
     DIR* dir = opendir(path.c_str());
     if (!dir) return;
@@ -31,10 +30,8 @@ void traverseDirectory(const string& path, int binWidth) {
         if (S_ISDIR(fileStat.st_mode)) {
             traverseDirectory(fullPath, binWidth);
         }
-        
         else if (S_ISREG(fileStat.st_mode)) {
             long size = fileStat.st_size;
-
             int binIndex = size / binWidth;
             histogram[binIndex]++;
         }
@@ -43,7 +40,7 @@ void traverseDirectory(const string& path, int binWidth) {
     closedir(dir);
 }
 
-// Function to print histogram
+// Print histogram
 void printHistogram(int binWidth) {
     cout << "\nFile Size Histogram:\n";
 
@@ -54,7 +51,8 @@ void printHistogram(int binWidth) {
         long lower = bin * binWidth;
         long upper = lower + binWidth - 1;
 
-        cout << "[" << lower << " - " << upper << "] : " << count << " files\n";
+        cout << "[" << lower << " - " << upper << "] : "
+             << count << " files\n";
     }
 }
 
