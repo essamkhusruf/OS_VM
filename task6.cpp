@@ -14,8 +14,6 @@ void traverseDirectory(const string& path, int binWidth) {
     if (!dir) return;
 
     struct dirent* entry;
-
-    while ((entry = readdir(dir)) != NULL) {
         string name = entry->d_name;
 
         if (name == "." || name == "..")
