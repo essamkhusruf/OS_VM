@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fstream>
 #include <vector>
 
@@ -23,12 +24,10 @@ int main(int argc, char* argv[]) {
     }
 
     vector<int> pages;
-    int num;
+    int page;
 
-    while (file >> num)
-        pages.push_back(num);
-
-    file.close();
+    while (file >> page)
+        pages.push_back(page);
 
     for (int frames = 1; frames <= maxFrames; frames++) {
 
@@ -37,56 +36,52 @@ int main(int argc, char* argv[]) {
 
         int faults = 0;
 
-        for (int i = 0; i < pages.size(); i++) {
+        for (int p : pages) {
 
-            int current = pages[i];
-            bool found = false;
+            bool hit = false;
 
-            // shift right (aging step)
-            for (int j = 0; j < frames; j++)
-                age[j] = age[j] >> 1;
+            for (int i = 0; i < frames; i++)
+                age[i] >>= 1;
 
-            // check if page exists
-            for (int j = 0; j < frames; j++) {
-                if (memory[j] == current) {
-                    age[j] = age[j] | 128;
-                    found = true;
+            for (int i = 0; i < frames; i++) {
+                if (memory[i] == p) {
+                    age[i] |= 128;
+                    hit = true;
                     break;
                 }
             }
 
-            // if not found → page fault
-            if (!found) {
+            if (!hit) {
 
                 faults++;
 
-                int index = -1;
+                int victim = -1;
 
-                // check empty frame
-                for (int j = 0; j < frames; j++) {
-                    if (memory[j] == -1) {
-                        index = j;
+                for (int i = 0; i < frames; i++) {
+                    if (memory[i] == -1) {
+                        victim = i;
                         break;
                     }
                 }
 
-                // if no empty frame, find smallest age
-                if (index == -1) {
-                    index = 0;
-                    for (int j = 1; j < frames; j++) {
-                        if (age[j] < age[index])
-                            index = j;
+                if (victim == -1) {
+                    victim = 0;
+                    for (int i = 1; i < frames; i++) {
+                        if (age[i] < age[victim])
+                            victim = i;
                     }
                 }
 
-                memory[index] = current;
-                age[index] = 128;
+                memory[victim] = p;
+                age[victim] = 128;
             }
         }
 
-        double rate = (double)faults / pages.size() * 1000;
+        double faultsPer1000 =
+            (double)faults / pages.size() * 1000;
 
-        cout << frames << " " << rate << endl;
+        cout << frames << " "
+             << faultsPer1000 << endl;
     }
 
     return 0;
